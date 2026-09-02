@@ -1,14 +1,32 @@
 import { ScreenContent } from 'components/ScreenContent';
-import { StatusBar } from 'expo-status-bar';
 
 import './global.css';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import React from "react";
 
-export default function App() {
+import {
+  Provider,
+} from "react-redux";
+
+import {
+  StatusBar,
+} from "expo-status-bar";
+
+import {
+  store,
+} from "./src/store/store";
+
+import RootNavigator from "./src/navigation/RootNavigator";
+
+const App = () => {
   return (
-    <SafeAreaProvider>
-      <ScreenContent title="Home" path="App.tsx"></ScreenContent>
-      <StatusBar style="auto" />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <StatusBar
+        style="dark"
+      />
+
+      <RootNavigator />
+    </Provider>
   );
-}
+};
+
+export default App;
