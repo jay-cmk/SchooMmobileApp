@@ -3,186 +3,362 @@ import {
   createSlice,
 } from "@reduxjs/toolkit";
 
-import { loginApi } from "./auth.api";
+import {
+  loginApi,
+} from "./auth.api";
 
 import {
-  clearAuthStorage,
+  clearAuth,
   getAccessToken,
-  getUser,
-  saveAuthData,
+  getStoredUser,
+  saveAuth,
 } from "../../storage/authStorage";
-import { LoginPayload ,AuthUser} from "types/auth.types";
 
+import type {
+  AuthUser,
+  LoginPayload,
+} from "types/auth.types";
 
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
 interface AuthState {
   user: AuthUser | null;
+
   accessToken: string | null;
 
   loading: boolean;
-  initializing: boolean;
 
   error: string | null;
+
+  authInitialized: boolean;
 }
+
+/* =====================================================
+   INITIAL STATE
+===================================================== */
 
 const initialState: AuthState = {
   user: null,
+
   accessToken: null,
 
   loading: false,
-  initializing: true,
 
   error: null,
+
+  authInitialized: false,
 };
 
-export const login = createAsyncThunk(
-  "auth/login",
+/* =====================================================
+   LOGIN
+===================================================== */
 
-  async (
-    data: LoginPayload,
-    { rejectWithValue }
-  ) => {
-    try {
-      const result = await loginApi(data);
+export const login =
+  createAsyncThunk(
+    "auth/login",
 
-      await saveAuthData(
-        result.accessToken,
-        result.user
-      );
+    async (
+      data: LoginPayload,
+      {
+        rejectWithValue,
+      }
+    ) => {
+      try {
+        const result =
+          await loginApi(data);
 
-      return result;
-    } catch (error: any) {
-      return rejectWithValue(
-        error.response?.data?.message ||
-          "Login failed. Please check your credentials."
-      );
+        /*
+         * Mobile me token aur user ko
+         * SecureStore me save karenge.
+         */
+        await saveAuth(
+          result.accessToken,
+          result.user
+        );
+
+        return result;
+      } catch (error: any) {
+        return rejectWithValue(
+          error?.response?.data?.message ??
+            "Login failed"
+        );
+      }
     }
-  }
-);
+  );
 
-export const restoreAuth = createAsyncThunk(
-  "auth/restoreAuth",
+/* =====================================================
+   RESTORE AUTH
 
-  async () => {
-    const [accessToken, user] =
-      await Promise.all([
-        getAccessToken(),
-        getUser(),
-      ]);
+   App dobara open hone par SecureStore se
+   token + user restore karega.
+===================================================== */
 
-    if (!accessToken || !user) {
-      await clearAuthStorage();
+export const restoreAuth =
+  createAsyncThunk(
+    "auth/restoreAuth",
 
-      return {
-        accessToken: null,
-        user: null,
-      };
+    async (
+      _,
+      {
+        rejectWithValue,
+      }
+    ) => {
+      try {
+        const [
+          accessToken,
+          user,
+        ] =
+          await Promise.all([
+            getAccessToken(),
+            getStoredUser(),
+          ]);
+
+        /*
+         * Agar token ya user me se
+         * koi missing hai to old auth
+         * clean kar denge.
+         */
+        if (
+          !accessToken ||
+          !user
+        ) {
+          await clearAuth();
+
+          return {
+            accessToken: null,
+            user: null,
+          };
+        }
+
+        return {
+          accessToken,
+          user,
+        };
+      } catch (error: any) {
+        await clearAuth();
+
+        return rejectWithValue(
+          error?.message ??
+            "Failed to restore login"
+        );
+      }
     }
+  );
 
-    return {
-      accessToken,
-      user: user as AuthUser,
-    };
-  }
-);
+/* =====================================================
+   LOGOUT
 
-export const logout = createAsyncThunk(
-  "auth/logout",
+   SecureStore se accessToken aur user
+   dono remove karega.
+===================================================== */
 
-  async () => {
-    await clearAuthStorage();
-  }
-);
+export const logout =
+  createAsyncThunk(
+    "auth/logout",
 
-const authSlice = createSlice({
-  name: "auth",
+    async (
+      _,
+      {
+        rejectWithValue,
+      }
+    ) => {
+      try {
+        await clearAuth();
 
-  initialState,
+        return true;
+      } catch (error: any) {
+        return rejectWithValue(
+          error?.message ??
+            "Logout failed"
+        );
+      }
+    }
+  );
 
-  reducers: {
-    clearAuthError: (state) => {
-      state.error = null;
-    },
-  },
+/* =====================================================
+   AUTH SLICE
+===================================================== */
 
-  extraReducers: (builder) => {
-    builder
+const authSlice =
+  createSlice({
+    name: "auth",
 
-      // LOGIN
-      .addCase(login.pending, (state) => {
-        state.loading = true;
+    initialState,
+
+    reducers: {
+      clearAuthError: (
+        state
+      ) => {
         state.error = null;
-      })
+      },
+    },
 
-      .addCase(
-        login.fulfilled,
-        (state, action) => {
-          state.loading = false;
+    extraReducers:
+      (builder) => {
+        builder
 
-          state.accessToken =
-            action.payload.accessToken;
+          /* =============================================
+             LOGIN
+          ============================================= */
 
-          state.user = action.payload.user;
+          .addCase(
+            login.pending,
+            (state) => {
+              state.loading = true;
 
-          state.error = null;
-        }
-      )
+              state.error = null;
+            }
+          )
 
-      .addCase(
-        login.rejected,
-        (state, action) => {
-          state.loading = false;
+          .addCase(
+            login.fulfilled,
+            (
+              state,
+              action
+            ) => {
+              state.loading = false;
 
-          state.error =
-            (action.payload as string) ||
-            "Login failed";
-        }
-      )
+              state.error = null;
 
-      // RESTORE AUTH
-      .addCase(
-        restoreAuth.pending,
-        (state) => {
-          state.initializing = true;
-        }
-      )
+              state.accessToken =
+                action.payload.accessToken;
 
-      .addCase(
-        restoreAuth.fulfilled,
-        (state, action) => {
-          state.initializing = false;
+              state.user =
+                action.payload.user;
 
-          state.accessToken =
-            action.payload.accessToken;
+              state.authInitialized =
+                true;
+            }
+          )
 
-          state.user = action.payload.user;
-        }
-      )
+          .addCase(
+            login.rejected,
+            (
+              state,
+              action
+            ) => {
+              state.loading = false;
 
-      .addCase(
-        restoreAuth.rejected,
-        (state) => {
-          state.initializing = false;
-          state.accessToken = null;
-          state.user = null;
-        }
-      )
+              state.error =
+                (action.payload as string) ??
+                "Login failed";
 
-      // LOGOUT
-      .addCase(
-        logout.fulfilled,
-        (state) => {
-          state.user = null;
-          state.accessToken = null;
-          state.loading = false;
-          state.error = null;
-        }
-      );
-  },
-});
+              state.authInitialized =
+                true;
+            }
+          )
+
+          /* =============================================
+             RESTORE AUTH
+          ============================================= */
+
+          .addCase(
+            restoreAuth.pending,
+            (state) => {
+              state.authInitialized =
+                false;
+            }
+          )
+
+          .addCase(
+            restoreAuth.fulfilled,
+            (
+              state,
+              action
+            ) => {
+              state.accessToken =
+                action.payload.accessToken;
+
+              state.user =
+                action.payload.user;
+
+              state.loading = false;
+
+              state.error = null;
+
+              state.authInitialized =
+                true;
+            }
+          )
+
+          .addCase(
+            restoreAuth.rejected,
+            (
+              state,
+              action
+            ) => {
+              state.user = null;
+
+              state.accessToken = null;
+
+              state.loading = false;
+
+              state.error =
+                (action.payload as string) ??
+                null;
+
+              state.authInitialized =
+                true;
+            }
+          )
+
+          /* =============================================
+             LOGOUT
+          ============================================= */
+
+          .addCase(
+            logout.pending,
+            (state) => {
+              state.loading = true;
+
+              state.error = null;
+            }
+          )
+
+          .addCase(
+            logout.fulfilled,
+            (state) => {
+              state.user = null;
+
+              state.accessToken = null;
+
+              state.loading = false;
+
+              state.error = null;
+
+              state.authInitialized =
+                true;
+            }
+          )
+
+          .addCase(
+            logout.rejected,
+            (
+              state,
+              action
+            ) => {
+              state.loading = false;
+
+              state.error =
+                (action.payload as string) ??
+                "Logout failed";
+            }
+          );
+      },
+  });
+
+/* =====================================================
+   EXPORT ACTIONS
+===================================================== */
 
 export const {
   clearAuthError,
 } = authSlice.actions;
+
+/* =====================================================
+   EXPORT REDUCER
+===================================================== */
 
 export default authSlice.reducer;

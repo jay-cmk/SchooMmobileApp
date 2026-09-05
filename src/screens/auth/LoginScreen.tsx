@@ -238,6 +238,576 @@
 
 
 
+// import React, {
+//   useEffect,
+//   useState,
+// } from "react";
+
+// import {
+//   ActivityIndicator,
+//   KeyboardAvoidingView,
+//   Platform,
+//   Pressable,
+//   ScrollView,
+//   StyleSheet,
+//   Text,
+//   TextInput,
+//   View,
+// } from "react-native";
+
+// import type {
+//   NativeStackScreenProps,
+// } from "@react-navigation/native-stack";
+
+// import {
+//   Ionicons,
+// } from "@expo/vector-icons";
+
+
+
+// import {
+//   clearAuthError,
+//   login,
+// } from "../../features/auth/auth.slice";
+
+
+
+
+// import { useAppSelector,useAppDispatch } from "@/store/hook";
+// import { UserRole } from "types/auth.types";
+// import { RootStackParamList } from "types/navigation.types";
+
+// type Props = NativeStackScreenProps<
+//   RootStackParamList,
+//   "Login"
+// >;
+
+// const LoginScreen: React.FC<Props> = ({
+//   navigation,
+// }) => {
+//   const dispatch = useAppDispatch();
+
+//   const {
+//     loading,
+//     error,
+//     user,
+//     accessToken,
+//   } = useAppSelector(
+//     (state) => state.auth
+//   );
+
+//   const [email, setEmail] =
+//     useState("");
+
+//   const [password, setPassword] =
+//     useState("");
+
+//   const [
+//     showPassword,
+//     setShowPassword,
+//   ] = useState(false);
+
+//   const [
+//     localError,
+//     setLocalError,
+//   ] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     if (
+//       accessToken &&
+//       user?.role === UserRole.STUDENT
+//     ) {
+//       navigation.reset({
+//         index: 0,
+
+//         routes: [
+//           {
+//             name: "StudentApp",
+//           },
+//         ],
+//       });
+//     }
+//   }, [
+//     accessToken,
+//     user,
+//     navigation,
+//   ]);
+
+//   useEffect(() => {
+//     return () => {
+//       dispatch(clearAuthError());
+//     };
+//   }, [dispatch]);
+
+//   const handleLogin = async () => {
+//     setLocalError(null);
+
+//     dispatch(clearAuthError());
+
+//     const cleanEmail =
+//       email.trim().toLowerCase();
+
+//     if (!cleanEmail) {
+//       setLocalError(
+//         "Please enter your email."
+//       );
+
+//       return;
+//     }
+
+//     if (!password) {
+//       setLocalError(
+//         "Please enter your password."
+//       );
+
+//       return;
+//     }
+
+//     const result = await dispatch(
+//       login({
+//         email: cleanEmail,
+//         password,
+//       })
+//     );
+
+//     if (login.fulfilled.match(result)) {
+//       const loggedInUser =
+//         result.payload.user;
+
+//       if (
+//         loggedInUser.role !==
+//         UserRole.STUDENT
+//       ) {
+//         setLocalError(
+//           "This login is currently available for students only."
+//         );
+
+//         return;
+//       }
+
+//       navigation.reset({
+//         index: 0,
+
+//         routes: [
+//           {
+//             name: "StudentApp",
+//           },
+//         ],
+//       });
+//     }
+//   };
+
+//   const displayError =
+//     localError || error;
+
+//   return (
+//     <KeyboardAvoidingView
+//       style={styles.container}
+//       behavior={
+//         Platform.OS === "ios"
+//           ? "padding"
+//           : undefined
+//       }
+//     >
+//       <ScrollView
+//         contentContainerStyle={
+//           styles.scrollContent
+//         }
+//         keyboardShouldPersistTaps="handled"
+//       >
+//         {/* HEADER */}
+
+//         <View style={styles.header}>
+//           <View style={styles.headerTop}>
+//             <View style={styles.logo}>
+//               <Ionicons
+//                 name="school"
+//                 size={28}
+//                 color="#4355D8"
+//               />
+//             </View>
+
+//             <Text style={styles.schoolName}>
+//               Northstar Academy
+//             </Text>
+//           </View>
+
+//           <View style={styles.headerText}>
+//             <Text style={styles.portalText}>
+//               STUDENT PORTAL
+//             </Text>
+
+//             <Text style={styles.welcome}>
+//               Welcome back
+//             </Text>
+//           </View>
+//         </View>
+
+//         {/* FORM */}
+
+//         <View style={styles.content}>
+//           <Text style={styles.description}>
+//             Continue your learning journey.
+//           </Text>
+
+//           {displayError ? (
+//             <View style={styles.errorBox}>
+//               <Ionicons
+//                 name="alert-circle-outline"
+//                 size={20}
+//                 color="#CC3D4E"
+//               />
+
+//               <Text style={styles.errorText}>
+//                 {displayError}
+//               </Text>
+//             </View>
+//           ) : null}
+
+//           <View style={styles.form}>
+//             {/* EMAIL */}
+
+//             <View style={styles.inputBox}>
+//               <Text style={styles.label}>
+//                 EMAIL
+//               </Text>
+
+//               <View style={styles.inputRow}>
+//                 <Ionicons
+//                   name="mail-outline"
+//                   size={21}
+//                   color="#606F88"
+//                 />
+
+//                 <TextInput
+//                   value={email}
+//                   onChangeText={setEmail}
+//                   placeholder="student@example.com"
+//                   placeholderTextColor="#9AA3B4"
+//                   autoCapitalize="none"
+//                   keyboardType="email-address"
+//                   autoCorrect={false}
+//                   editable={!loading}
+//                   style={styles.input}
+//                 />
+//               </View>
+//             </View>
+
+//             {/* PASSWORD */}
+
+//             <View style={styles.inputBox}>
+//               <Text style={styles.label}>
+//                 PASSWORD
+//               </Text>
+
+//               <View style={styles.inputRow}>
+//                 <Ionicons
+//                   name="lock-closed-outline"
+//                   size={21}
+//                   color="#606F88"
+//                 />
+
+//                 <TextInput
+//                   value={password}
+//                   onChangeText={setPassword}
+//                   placeholder="••••••••"
+//                   placeholderTextColor="#9AA3B4"
+//                   secureTextEntry={
+//                     !showPassword
+//                   }
+//                   editable={!loading}
+//                   style={styles.input}
+//                 />
+
+//                 <Pressable
+//                   onPress={() =>
+//                     setShowPassword(
+//                       (prev) => !prev
+//                     )
+//                   }
+//                   hitSlop={10}
+//                 >
+//                   <Ionicons
+//                     name={
+//                       showPassword
+//                         ? "eye-off-outline"
+//                         : "eye-outline"
+//                     }
+//                     size={22}
+//                     color="#606F88"
+//                   />
+//                 </Pressable>
+//               </View>
+//             </View>
+
+//             {/* FORGOT PASSWORD */}
+
+//             <Pressable>
+//               <Text style={styles.forgot}>
+//                 Forgot password?
+//               </Text>
+//             </Pressable>
+
+//             {/* LOGIN BUTTON */}
+
+//             <Pressable
+//               onPress={handleLogin}
+//               disabled={loading}
+//               style={({ pressed }) => [
+//                 styles.loginButton,
+
+//                 pressed &&
+//                 !loading
+//                   ? styles.loginButtonPressed
+//                   : null,
+
+//                 loading
+//                   ? styles.loginButtonDisabled
+//                   : null,
+//               ]}
+//             >
+//               {loading ? (
+//                 <>
+//                   <ActivityIndicator
+//                     size="small"
+//                     color="#FFFFFF"
+//                   />
+
+//                   <Text
+//                     style={
+//                       styles.loginButtonText
+//                     }
+//                   >
+//                     Signing in securely...
+//                   </Text>
+//                 </>
+//               ) : (
+//                 <Text
+//                   style={
+//                     styles.loginButtonText
+//                   }
+//                 >
+//                   Sign in securely
+//                 </Text>
+//               )}
+//             </Pressable>
+//           </View>
+
+//           <Text style={styles.securityText}>
+//             Your account only shows your
+//             own school records.
+//           </Text>
+//         </View>
+//       </ScrollView>
+//     </KeyboardAvoidingView>
+//   );
+// };
+
+// export default LoginScreen;
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#F7F7FB",
+//   },
+
+//   scrollContent: {
+//     flexGrow: 1,
+//   },
+
+//   header: {
+//     height: 270,
+//     backgroundColor: "#4355D8",
+//     paddingTop: 60,
+//     paddingHorizontal: 24,
+
+//     borderBottomLeftRadius: 48,
+//     borderBottomRightRadius: 48,
+//   },
+
+//   headerTop: {
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "space-between",
+//   },
+
+//   logo: {
+//     width: 50,
+//     height: 50,
+//     backgroundColor: "#FFFFFF",
+//     borderRadius: 16,
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+
+//   schoolName: {
+//     color: "#FFFFFF",
+//     fontSize: 14,
+//     fontWeight: "700",
+//   },
+
+//   headerText: {
+//     marginTop: 42,
+//   },
+
+//   portalText: {
+//     color: "rgba(255,255,255,0.78)",
+//     fontSize: 13,
+//     fontWeight: "700",
+//     letterSpacing: 1,
+//   },
+
+//   welcome: {
+//     color: "#FFFFFF",
+//     fontSize: 31,
+//     fontWeight: "800",
+//     marginTop: 7,
+//   },
+
+//   content: {
+//     flex: 1,
+//     marginTop: -22,
+//     backgroundColor: "#F7F7FB",
+
+//     borderTopLeftRadius: 32,
+//     borderTopRightRadius: 32,
+
+//     paddingHorizontal: 24,
+//     paddingTop: 32,
+//     paddingBottom: 40,
+//   },
+
+//   description: {
+//     fontSize: 16,
+//     color: "#606F88",
+//   },
+
+//   errorBox: {
+//     marginTop: 20,
+
+//     borderWidth: 1,
+//     borderColor: "rgba(220,76,90,0.25)",
+
+//     backgroundColor: "#FDF2F2",
+
+//     borderRadius: 14,
+
+//     padding: 14,
+
+//     flexDirection: "row",
+//     alignItems: "flex-start",
+//     gap: 10,
+//   },
+
+//   errorText: {
+//     flex: 1,
+//     fontSize: 13,
+//     lineHeight: 19,
+//     color: "#CC3D4E",
+//     fontWeight: "500",
+//   },
+
+//   form: {
+//     marginTop: 28,
+//     gap: 16,
+//   },
+
+//   inputBox: {
+//     borderWidth: 1,
+//     borderColor: "#D8DDEA",
+
+//     backgroundColor: "#FFFFFF",
+
+//     borderRadius: 14,
+
+//     paddingHorizontal: 16,
+//     paddingVertical: 13,
+//   },
+
+//   label: {
+//     color: "#4355D8",
+//     fontSize: 11,
+//     fontWeight: "700",
+//     letterSpacing: 1,
+//   },
+
+//   inputRow: {
+//     marginTop: 7,
+
+//     flexDirection: "row",
+//     alignItems: "center",
+
+//     gap: 10,
+//   },
+
+//   input: {
+//     flex: 1,
+//     minHeight: 36,
+
+//     color: "#15213B",
+
+//     fontSize: 15,
+//     paddingVertical: 0,
+//   },
+
+//   forgot: {
+//     color: "#4355D8",
+//     fontSize: 14,
+//     fontWeight: "700",
+//   },
+
+//   loginButton: {
+//     minHeight: 55,
+
+//     backgroundColor: "#4355D8",
+
+//     borderRadius: 14,
+
+//     flexDirection: "row",
+//     alignItems: "center",
+//     justifyContent: "center",
+
+//     gap: 9,
+
+//     marginTop: 12,
+
+//     elevation: 3,
+//   },
+
+//   loginButtonPressed: {
+//     transform: [
+//       {
+//         scale: 0.985,
+//       },
+//     ],
+//   },
+
+//   loginButtonDisabled: {
+//     opacity: 0.7,
+//   },
+
+//   loginButtonText: {
+//     color: "#FFFFFF",
+//     fontSize: 16,
+//     fontWeight: "700",
+//   },
+
+//   securityText: {
+//     textAlign: "center",
+//     color: "#606F88",
+//     fontSize: 12,
+//     marginTop: 24,
+//   },
+// });
+
+
+
+
+
+
+
+
+
 import React, {
   useEffect,
   useState,
@@ -249,58 +819,55 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
 
-import type {
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import {
+  SafeAreaView,
+} from "react-native-safe-area-context";
 
 import {
   Ionicons,
 } from "@expo/vector-icons";
 
-
-
 import {
   clearAuthError,
   login,
+  logout,
 } from "../../features/auth/auth.slice";
 
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "../../store/hook";
+
+import {
+  UserRole,
+} from "types/auth.types";
 
 
-
-import { useAppSelector,useAppDispatch } from "@/store/hook";
-import { UserRole } from "types/auth.types";
-import { RootStackParamList } from "types/navigation.types";
-
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  "Login"
->;
-
-const LoginScreen: React.FC<Props> = ({
-  navigation,
-}) => {
-  const dispatch = useAppDispatch();
+const LoginScreen = () => {
+  const dispatch =
+    useAppDispatch();
 
   const {
     loading,
     error,
-    user,
-    accessToken,
   } = useAppSelector(
     (state) => state.auth
   );
 
-  const [email, setEmail] =
-    useState("");
+  const [
+    email,
+    setEmail,
+  ] = useState("");
 
-  const [password, setPassword] =
-    useState("");
+  const [
+    password,
+    setPassword,
+  ] = useState("");
 
   const [
     showPassword,
@@ -310,492 +877,451 @@ const LoginScreen: React.FC<Props> = ({
   const [
     localError,
     setLocalError,
-  ] = useState<string | null>(null);
+  ] = useState<
+    string | null
+  >(null);
 
-  useEffect(() => {
-    if (
-      accessToken &&
-      user?.role === UserRole.STUDENT
-    ) {
-      navigation.reset({
-        index: 0,
-
-        routes: [
-          {
-            name: "StudentApp",
-          },
-        ],
-      });
-    }
-  }, [
-    accessToken,
-    user,
-    navigation,
-  ]);
 
   useEffect(() => {
     return () => {
-      dispatch(clearAuthError());
+      dispatch(
+        clearAuthError()
+      );
     };
   }, [dispatch]);
 
-  const handleLogin = async () => {
-    setLocalError(null);
 
-    dispatch(clearAuthError());
+  const handleLogin =
+    async () => {
+      setLocalError(null);
 
-    const cleanEmail =
-      email.trim().toLowerCase();
-
-    if (!cleanEmail) {
-      setLocalError(
-        "Please enter your email."
+      dispatch(
+        clearAuthError()
       );
 
-      return;
-    }
+      const cleanEmail =
+        email
+          .trim()
+          .toLowerCase();
 
-    if (!password) {
-      setLocalError(
-        "Please enter your password."
-      );
 
-      return;
-    }
-
-    const result = await dispatch(
-      login({
-        email: cleanEmail,
-        password,
-      })
-    );
-
-    if (login.fulfilled.match(result)) {
-      const loggedInUser =
-        result.payload.user;
-
-      if (
-        loggedInUser.role !==
-        UserRole.STUDENT
-      ) {
+      if (!cleanEmail) {
         setLocalError(
-          "This login is currently available for students only."
+          "Please enter your email."
         );
 
         return;
       }
 
-      navigation.reset({
-        index: 0,
 
-        routes: [
-          {
-            name: "StudentApp",
-          },
-        ],
-      });
-    }
-  };
+      if (!password) {
+        setLocalError(
+          "Please enter your password."
+        );
+
+        return;
+      }
+
+
+      try {
+        const result =
+          await dispatch(
+            login({
+              email: cleanEmail,
+              password,
+            })
+          ).unwrap();
+
+
+        const allowedRole =
+          result.user.role ===
+            UserRole.STUDENT ||
+          result.user.role ===
+            UserRole.TEACHER ||
+            result.user.role === 
+            UserRole.SCHOOL_ADMIN;
+
+
+        if (!allowedRole) {
+          await dispatch(
+            logout()
+          ).unwrap();
+
+          setLocalError(
+            "This mobile app is currently available for students and teachers only."
+          );
+
+          return;
+        }
+
+        /*
+         * Navigation manually nahi karna.
+         *
+         * Redux user update hone ke baad
+         * RootNavigator automatically:
+         *
+         * STUDENT -> StudentApp
+         * TEACHER -> TeacherApp
+         */
+      } catch (
+        loginError: any
+      ) {
+        console.log(
+          "LOGIN ERROR:",
+          loginError
+        );
+      }
+    };
+
 
   const displayError =
     localError || error;
 
+
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={
-        Platform.OS === "ios"
-          ? "padding"
-          : undefined
-      }
+    <SafeAreaView
+      edges={[
+        "top",
+        "left",
+        "right",
+      ]}
+      className="flex-1 bg-[#F7F7FB]"
     >
-      <ScrollView
-        contentContainerStyle={
-          styles.scrollContent
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={
+          Platform.OS === "ios"
+            ? "padding"
+            : undefined
         }
-        keyboardShouldPersistTaps="handled"
       >
-        {/* HEADER */}
+        <ScrollView
+          className="flex-1"
+          contentContainerClassName="flex-grow"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={
+            false
+          }
+        >
 
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <View style={styles.logo}>
-              <Ionicons
-                name="school"
-                size={28}
-                color="#4355D8"
-              />
-            </View>
+          {/* ================================
+              HEADER
+          ================================= */}
 
-            <Text style={styles.schoolName}>
-              Northstar Academy
-            </Text>
-          </View>
+          <View className="h-[250px] rounded-b-[42px] bg-[#4355D8] px-6 pt-5">
 
-          <View style={styles.headerText}>
-            <Text style={styles.portalText}>
-              STUDENT PORTAL
-            </Text>
+            {/* Logo + School */}
 
-            <Text style={styles.welcome}>
-              Welcome back
-            </Text>
-          </View>
-        </View>
+            <View className="flex-row items-center justify-between">
 
-        {/* FORM */}
+              <View className="h-12 w-12 items-center justify-center rounded-2xl bg-white">
 
-        <View style={styles.content}>
-          <Text style={styles.description}>
-            Continue your learning journey.
-          </Text>
-
-          {displayError ? (
-            <View style={styles.errorBox}>
-              <Ionicons
-                name="alert-circle-outline"
-                size={20}
-                color="#CC3D4E"
-              />
-
-              <Text style={styles.errorText}>
-                {displayError}
-              </Text>
-            </View>
-          ) : null}
-
-          <View style={styles.form}>
-            {/* EMAIL */}
-
-            <View style={styles.inputBox}>
-              <Text style={styles.label}>
-                EMAIL
-              </Text>
-
-              <View style={styles.inputRow}>
                 <Ionicons
-                  name="mail-outline"
-                  size={21}
-                  color="#606F88"
+                  name="school"
+                  size={26}
+                  color="#4355D8"
                 />
 
-                <TextInput
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="student@example.com"
-                  placeholderTextColor="#9AA3B4"
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  autoCorrect={false}
-                  editable={!loading}
-                  style={styles.input}
-                />
               </View>
+
+
+              <View className="flex-row items-center">
+
+                <View className="mr-2 h-2 w-2 rounded-full bg-[#7DE2B8]" />
+
+                <Text className="text-sm font-bold text-white">
+                  Northstar Academy
+                </Text>
+
+              </View>
+
             </View>
 
-            {/* PASSWORD */}
 
-            <View style={styles.inputBox}>
-              <Text style={styles.label}>
-                PASSWORD
+            {/* Welcome */}
+
+            <View className="mt-10">
+
+              <Text className="text-xs font-bold tracking-[1.5px] text-white/70">
+                SCHOOL PORTAL
               </Text>
 
-              <View style={styles.inputRow}>
+              <Text className="mt-2 text-[32px] font-extrabold tracking-tight text-white">
+                Welcome back
+              </Text>
+
+              <Text className="mt-2 text-sm text-white/70">
+                Student & Teacher Login
+              </Text>
+
+            </View>
+
+          </View>
+
+
+          {/* ================================
+              CONTENT
+          ================================= */}
+
+          <View className="-mt-6 flex-1 rounded-t-[32px] bg-[#F7F7FB] px-6 pb-10 pt-8">
+
+            <Text className="text-[15px] leading-6 text-[#606F88]">
+              Sign in to continue to your school account.
+            </Text>
+
+
+            {/* ================================
+                ERROR
+            ================================= */}
+
+            {displayError ? (
+              <View className="mt-5 flex-row items-start rounded-2xl border border-[#F0C9CE] bg-[#FDF2F2] p-4">
+
                 <Ionicons
-                  name="lock-closed-outline"
-                  size={21}
-                  color="#606F88"
+                  name="alert-circle-outline"
+                  size={20}
+                  color="#CC3D4E"
                 />
 
-                <TextInput
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
-                  placeholderTextColor="#9AA3B4"
-                  secureTextEntry={
-                    !showPassword
-                  }
-                  editable={!loading}
-                  style={styles.input}
-                />
+                <Text className="ml-2 flex-1 text-[13px] font-medium leading-5 text-[#CC3D4E]">
+                  {displayError}
+                </Text>
 
-                <Pressable
-                  onPress={() =>
-                    setShowPassword(
-                      (prev) => !prev
-                    )
-                  }
-                  hitSlop={10}
-                >
+              </View>
+            ) : null}
+
+
+            {/* ================================
+                FORM
+            ================================= */}
+
+            <View className="mt-6">
+
+              {/* EMAIL */}
+
+              <View className="rounded-2xl border border-[#D8DDEA] bg-white px-4 py-3">
+
+                <Text className="text-[10px] font-bold tracking-[1px] text-[#4355D8]">
+                  EMAIL
+                </Text>
+
+
+                <View className="mt-1 flex-row items-center">
+
                   <Ionicons
-                    name={
-                      showPassword
-                        ? "eye-off-outline"
-                        : "eye-outline"
-                    }
-                    size={22}
+                    name="mail-outline"
+                    size={20}
                     color="#606F88"
                   />
-                </Pressable>
-              </View>
-            </View>
 
-            {/* FORGOT PASSWORD */}
 
-            <Pressable>
-              <Text style={styles.forgot}>
-                Forgot password?
-              </Text>
-            </Pressable>
+                  <TextInput
+                    value={email}
+                    onChangeText={(
+                      value
+                    ) => {
+                      setEmail(value);
 
-            {/* LOGIN BUTTON */}
-
-            <Pressable
-              onPress={handleLogin}
-              disabled={loading}
-              style={({ pressed }) => [
-                styles.loginButton,
-
-                pressed &&
-                !loading
-                  ? styles.loginButtonPressed
-                  : null,
-
-                loading
-                  ? styles.loginButtonDisabled
-                  : null,
-              ]}
-            >
-              {loading ? (
-                <>
-                  <ActivityIndicator
-                    size="small"
-                    color="#FFFFFF"
+                      if (localError) {
+                        setLocalError(
+                          null
+                        );
+                      }
+                    }}
+                    placeholder="student@example.com"
+                    placeholderTextColor="#9AA3B4"
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    autoCorrect={false}
+                    editable={!loading}
+                    returnKeyType="next"
+                    className="ml-3 min-h-[42px] flex-1 text-[15px] text-[#15213B]"
                   />
 
-                  <Text
-                    style={
-                      styles.loginButtonText
-                    }
-                  >
-                    Signing in securely...
-                  </Text>
-                </>
-              ) : (
-                <Text
-                  style={
-                    styles.loginButtonText
-                  }
-                >
-                  Sign in securely
+                </View>
+
+              </View>
+
+
+              {/* PASSWORD */}
+
+              <View className="mt-4 rounded-2xl border border-[#D8DDEA] bg-white px-4 py-3">
+
+                <Text className="text-[10px] font-bold tracking-[1px] text-[#4355D8]">
+                  PASSWORD
                 </Text>
-              )}
-            </Pressable>
+
+
+                <View className="mt-1 flex-row items-center">
+
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={20}
+                    color="#606F88"
+                  />
+
+
+                  <TextInput
+                    value={password}
+                    onChangeText={(
+                      value
+                    ) => {
+                      setPassword(
+                        value
+                      );
+
+                      if (localError) {
+                        setLocalError(
+                          null
+                        );
+                      }
+                    }}
+                    placeholder="••••••••"
+                    placeholderTextColor="#9AA3B4"
+                    secureTextEntry={
+                      !showPassword
+                    }
+                    editable={!loading}
+                    returnKeyType="done"
+                    onSubmitEditing={
+                      handleLogin
+                    }
+                    className="ml-3 min-h-[42px] flex-1 text-[15px] text-[#15213B]"
+                  />
+
+
+                  <Pressable
+                    onPress={() =>
+                      setShowPassword(
+                        (previous) =>
+                          !previous
+                      )
+                    }
+                    disabled={loading}
+                    hitSlop={10}
+                    className="h-10 w-10 items-center justify-center"
+                  >
+
+                    <Ionicons
+                      name={
+                        showPassword
+                          ? "eye-off-outline"
+                          : "eye-outline"
+                      }
+                      size={21}
+                      color="#606F88"
+                    />
+
+                  </Pressable>
+
+                </View>
+
+              </View>
+
+
+              {/* FORGOT PASSWORD */}
+
+              <Pressable
+                disabled={loading}
+                className="mt-4 self-start py-1"
+              >
+
+                <Text className="text-sm font-bold text-[#4355D8]">
+                  Forgot password?
+                </Text>
+
+              </Pressable>
+
+
+              {/* ================================
+                  LOGIN BUTTON
+              ================================= */}
+
+              <Pressable
+                onPress={
+                  handleLogin
+                }
+                disabled={loading}
+                className={
+                  `mt-6 h-[58px] w-full flex-row items-center justify-center rounded-2xl ${
+                    loading
+                      ? "bg-[#7C88E5]"
+                      : "bg-[#4355D8] active:bg-[#3545C4]"
+                  }`
+                }
+                style={{
+                  elevation: 6,
+                  shadowColor:
+                    "#4355D8",
+                  shadowOffset: {
+                    width: 0,
+                    height: 5,
+                  },
+                  shadowOpacity:
+                    0.22,
+                  shadowRadius: 8,
+                }}
+              >
+
+                {loading ? (
+                  <>
+                    <ActivityIndicator
+                      size="small"
+                      color="#FFFFFF"
+                    />
+
+                    <Text className="ml-2 text-base font-extrabold text-white">
+                      Signing in...
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text className="text-base font-extrabold text-white">
+                      Sign in securely
+                    </Text>
+
+                    <Ionicons
+                      name="arrow-forward"
+                      size={20}
+                      color="#FFFFFF"
+                      style={{
+                        marginLeft: 8,
+                      }}
+                    />
+                  </>
+                )}
+
+              </Pressable>
+
+
+              {/* ================================
+                  SECURITY
+              ================================= */}
+
+              <View className="mt-7 flex-row items-center justify-center px-3">
+
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={16}
+                  color="#606F88"
+                />
+
+                <Text className="ml-2 flex-shrink text-center text-[11px] leading-4 text-[#606F88]">
+                  Your account only shows records you are authorized to access.
+                </Text>
+
+              </View>
+
+            </View>
+
           </View>
 
-          <Text style={styles.securityText}>
-            Your account only shows your
-            own school records.
-          </Text>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
+
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F7FB",
-  },
-
-  scrollContent: {
-    flexGrow: 1,
-  },
-
-  header: {
-    height: 270,
-    backgroundColor: "#4355D8",
-    paddingTop: 60,
-    paddingHorizontal: 24,
-
-    borderBottomLeftRadius: 48,
-    borderBottomRightRadius: 48,
-  },
-
-  headerTop: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-
-  logo: {
-    width: 50,
-    height: 50,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  schoolName: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  headerText: {
-    marginTop: 42,
-  },
-
-  portalText: {
-    color: "rgba(255,255,255,0.78)",
-    fontSize: 13,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-
-  welcome: {
-    color: "#FFFFFF",
-    fontSize: 31,
-    fontWeight: "800",
-    marginTop: 7,
-  },
-
-  content: {
-    flex: 1,
-    marginTop: -22,
-    backgroundColor: "#F7F7FB",
-
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-
-    paddingHorizontal: 24,
-    paddingTop: 32,
-    paddingBottom: 40,
-  },
-
-  description: {
-    fontSize: 16,
-    color: "#606F88",
-  },
-
-  errorBox: {
-    marginTop: 20,
-
-    borderWidth: 1,
-    borderColor: "rgba(220,76,90,0.25)",
-
-    backgroundColor: "#FDF2F2",
-
-    borderRadius: 14,
-
-    padding: 14,
-
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 10,
-  },
-
-  errorText: {
-    flex: 1,
-    fontSize: 13,
-    lineHeight: 19,
-    color: "#CC3D4E",
-    fontWeight: "500",
-  },
-
-  form: {
-    marginTop: 28,
-    gap: 16,
-  },
-
-  inputBox: {
-    borderWidth: 1,
-    borderColor: "#D8DDEA",
-
-    backgroundColor: "#FFFFFF",
-
-    borderRadius: 14,
-
-    paddingHorizontal: 16,
-    paddingVertical: 13,
-  },
-
-  label: {
-    color: "#4355D8",
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 1,
-  },
-
-  inputRow: {
-    marginTop: 7,
-
-    flexDirection: "row",
-    alignItems: "center",
-
-    gap: 10,
-  },
-
-  input: {
-    flex: 1,
-    minHeight: 36,
-
-    color: "#15213B",
-
-    fontSize: 15,
-    paddingVertical: 0,
-  },
-
-  forgot: {
-    color: "#4355D8",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-
-  loginButton: {
-    minHeight: 55,
-
-    backgroundColor: "#4355D8",
-
-    borderRadius: 14,
-
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-
-    gap: 9,
-
-    marginTop: 12,
-
-    elevation: 3,
-  },
-
-  loginButtonPressed: {
-    transform: [
-      {
-        scale: 0.985,
-      },
-    ],
-  },
-
-  loginButtonDisabled: {
-    opacity: 0.7,
-  },
-
-  loginButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-
-  securityText: {
-    textAlign: "center",
-    color: "#606F88",
-    fontSize: 12,
-    marginTop: 24,
-  },
-});

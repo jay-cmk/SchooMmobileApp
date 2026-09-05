@@ -7,7 +7,7 @@ import {
 
 const API_URL =
   process.env.EXPO_PUBLIC_API_URL ??
-  "http://10.223.193.182:5000/api/v1";
+  "http://10.113.208.182:5000/api/v1";
 
 const api = axios.create({
   baseURL: API_URL,

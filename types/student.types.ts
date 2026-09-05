@@ -1,0 +1,165 @@
+export interface StudentProfile {
+  _id?: string;
+
+  name?: string;
+  email?: string;
+
+  admissionNumber?: string;
+  admissionNo?: string;
+  admissionId?: string;
+
+  rollNumber?: string | number;
+  rollNo?: string | number;
+
+  profileImage?: string;
+  avatar?: string;
+
+  dateOfBirth?: string;
+  bloodGroup?: string;
+
+  classId?:
+    | {
+        _id?: string;
+        name?: string;
+      }
+    | string;
+
+  sectionId?:
+    | {
+        _id?: string;
+        name?: string;
+      }
+    | string;
+
+  class?:
+    | {
+        _id?: string;
+        name?: string;
+      }
+    | string;
+
+  section?:
+    | {
+        _id?: string;
+        name?: string;
+      }
+    | string;
+}
+
+export interface StudentSubject {
+  _id?: string;
+
+  subjectId?: {
+    _id?: string;
+    name?: string;
+    code?: string;
+  };
+
+  subject?: {
+    _id?: string;
+    name?: string;
+    code?: string;
+  };
+
+  teacherId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  teacher?: {
+    _id?: string;
+    name?: string;
+  };
+
+  weeklyPeriods?: number;
+}
+
+export interface AttendanceRecord {
+  _id?: string;
+
+  date?: string;
+
+  status?:
+    | "PRESENT"
+    | "ABSENT"
+    | "LEAVE"
+    | "HALF_DAY"
+    | string;
+
+  subjectId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  subject?: {
+    _id?: string;
+    name?: string;
+  };
+}
+
+export interface TimetableEntry {
+  _id?: string;
+
+  day?: string;
+
+  startTime?: string;
+  endTime?: string;
+
+  period?: number;
+  periodNumber?: number;
+
+  room?: string;
+
+  subjectId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  subject?: {
+    _id?: string;
+    name?: string;
+  };
+
+  teacherId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  teacher?: {
+    _id?: string;
+    name?: string;
+  };
+}
+
+export interface HomeworkItem {
+  _id?: string;
+  id?: string;
+
+  title?: string;
+  description?: string;
+
+  dueDate?: string;
+
+  status?: string;
+  submissionStatus?: string;
+
+  subjectId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  subject?: {
+    _id?: string;
+    name?: string;
+  };
+
+  teacherId?: {
+    _id?: string;
+    name?: string;
+  };
+
+  teacher?: {
+    _id?: string;
+    name?: string;
+  };
+}

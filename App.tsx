@@ -17,14 +17,18 @@ import {
 
 import RootNavigator from "./src/navigation/RootNavigator";
 
+import {
+  SafeAreaProvider,
+} from "react-native-safe-area-context";
+
 const App = () => {
   return (
     <Provider store={store}>
-      <StatusBar
-        style="dark"
-      />
+       <SafeAreaProvider>
+        <StatusBar style="dark" />
 
-      <RootNavigator />
+        <RootNavigator />
+      </SafeAreaProvider>
     </Provider>
   );
 };
