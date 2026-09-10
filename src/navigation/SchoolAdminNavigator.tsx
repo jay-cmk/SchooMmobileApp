@@ -1,3 +1,6 @@
+
+
+
 // import React from "react";
 
 // import {
@@ -8,8 +11,43 @@
 //   SchoolAdminStackParamList,
 // } from "types/navigation.types";
 
+
+// /* =====================================================
+//    TAB NAVIGATOR
+// ===================================================== */
+
 // import SchoolAdminTabNavigator from "./schoolAdmin/SchoolAdminTabNavigator";
 
+
+// /* =====================================================
+//    SCHOOL ADMIN STACK SCREENS
+// ===================================================== */
+
+// import SchoolAttendanceScreen from "../screens/schoolAdmin/attendance/SchoolAttendanceScreen";
+
+// import SubjectAssignmentScreen from "../screens/schoolAdmin/subjectAssignment/SubjectAssignmentScreen";
+
+// import SchoolTimetableScreen from "../screens/schoolAdmin/timetable/SchoolTimetableScreen";
+
+// import SchoolHomeworkScreen from "../screens/schoolAdmin/homework/SchoolHomeworkScreen";
+
+
+// /* =====================================================
+//    ACADEMIC SCREENS
+// ===================================================== */
+
+// import SchoolAdminSessionsScreen from "../screens/schoolAdmin/academics/SchoolAdminSessionsScreen";
+
+// import SchoolAdminClassesScreen from "../screens/schoolAdmin/academics/SchoolAdminClassesScreen";
+
+// import SchoolAdminSectionsScreen from "../screens/schoolAdmin/academics/SchoolAdminSectionsScreen";
+
+// import SchoolAdminSubjectsScreen from "../screens/schoolAdmin/academics/SchoolAdminSubjectsScreen";
+
+
+// /* =====================================================
+//    NAVIGATOR
+// ===================================================== */
 
 // const Stack =
 //   createNativeStackNavigator<
@@ -23,8 +61,20 @@
 //       <Stack.Navigator
 //         screenOptions={{
 //           headerShown: false,
+
+//           animation:
+//             "slide_from_right",
+
+//           contentStyle: {
+//             backgroundColor:
+//               "#F7F7FB",
+//           },
 //         }}
 //       >
+
+//         {/* =============================================
+//             MAIN TABS
+//         ============================================= */}
 
 //         <Stack.Screen
 //           name="SchoolAdminTabs"
@@ -33,9 +83,106 @@
 //           }
 //         />
 
+
+//         {/* =============================================
+//             ATTENDANCE
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Attendance"
+//           component={
+//             SchoolAttendanceScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             SUBJECT ASSIGNMENT
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="SubjectAssignment"
+//           component={
+//             SubjectAssignmentScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             TIMETABLE
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Timetable"
+//           component={
+//             SchoolTimetableScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             HOMEWORK
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Homework"
+//           component={
+//             SchoolHomeworkScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             ACADEMIC SESSION
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Sessions"
+//           component={
+//             SchoolAdminSessionsScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             CLASSES
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Classes"
+//           component={
+//             SchoolAdminClassesScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             SECTIONS
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Sections"
+//           component={
+//             SchoolAdminSectionsScreen
+//           }
+//         />
+
+
+//         {/* =============================================
+//             SUBJECTS
+//         ============================================= */}
+
+//         <Stack.Screen
+//           name="Subjects"
+//           component={
+//             SchoolAdminSubjectsScreen
+//           }
+//         />
+
 //       </Stack.Navigator>
 //     );
 //   };
+
 
 // export default SchoolAdminNavigator;
 
@@ -48,40 +195,57 @@ import {
 
 import type {
   SchoolAdminStackParamList,
-} from "types/navigation.types";
+} from "../../types/navigation.types";
 
 
 /* =====================================================
    TAB NAVIGATOR
 ===================================================== */
 
-import SchoolAdminTabNavigator from "./schoolAdmin/SchoolAdminTabNavigator";
+import SchoolAdminTabNavigator
+  from "./schoolAdmin/SchoolAdminTabNavigator";
+
+
+/* =====================================================
+   COMMON SCREENS
+===================================================== */
+
+import NotificationScreen
+  from "../screens/common/notifications/NotificationScreen";
 
 
 /* =====================================================
    SCHOOL ADMIN STACK SCREENS
 ===================================================== */
 
-import SchoolAttendanceScreen from "../screens/schoolAdmin/attendance/SchoolAttendanceScreen";
+import SchoolAttendanceScreen
+  from "../screens/schoolAdmin/attendance/SchoolAttendanceScreen";
 
-import SubjectAssignmentScreen from "../screens/schoolAdmin/subjectAssignment/SubjectAssignmentScreen";
+import SubjectAssignmentScreen
+  from "../screens/schoolAdmin/subjectAssignment/SubjectAssignmentScreen";
 
-import SchoolTimetableScreen from "../screens/schoolAdmin/timetable/SchoolTimetableScreen";
+import SchoolTimetableScreen
+  from "../screens/schoolAdmin/timetable/SchoolTimetableScreen";
 
-import SchoolHomeworkScreen from "../screens/schoolAdmin/homework/SchoolHomeworkScreen";
+import SchoolHomeworkScreen
+  from "../screens/schoolAdmin/homework/SchoolHomeworkScreen";
 
 
 /* =====================================================
    ACADEMIC SCREENS
 ===================================================== */
 
-import SchoolAdminSessionsScreen from "../screens/schoolAdmin/academics/SchoolAdminSessionsScreen";
+import SchoolAdminSessionsScreen
+  from "../screens/schoolAdmin/academics/SchoolAdminSessionsScreen";
 
-import SchoolAdminClassesScreen from "../screens/schoolAdmin/academics/SchoolAdminClassesScreen";
+import SchoolAdminClassesScreen
+  from "../screens/schoolAdmin/academics/SchoolAdminClassesScreen";
 
-import SchoolAdminSectionsScreen from "../screens/schoolAdmin/academics/SchoolAdminSectionsScreen";
+import SchoolAdminSectionsScreen
+  from "../screens/schoolAdmin/academics/SchoolAdminSectionsScreen";
 
-import SchoolAdminSubjectsScreen from "../screens/schoolAdmin/academics/SchoolAdminSubjectsScreen";
+import SchoolAdminSubjectsScreen
+  from "../screens/schoolAdmin/academics/SchoolAdminSubjectsScreen";
 
 
 /* =====================================================
@@ -98,8 +262,10 @@ const SchoolAdminNavigator =
   () => {
     return (
       <Stack.Navigator
+        initialRouteName="SchoolAdminTabs"
         screenOptions={{
-          headerShown: false,
+          headerShown:
+            false,
 
           animation:
             "slide_from_right",
@@ -110,7 +276,6 @@ const SchoolAdminNavigator =
           },
         }}
       >
-
         {/* =============================================
             MAIN TABS
         ============================================= */}
@@ -119,6 +284,18 @@ const SchoolAdminNavigator =
           name="SchoolAdminTabs"
           component={
             SchoolAdminTabNavigator
+          }
+        />
+
+
+        {/* =============================================
+            NOTIFICATIONS
+        ============================================= */}
+
+        <Stack.Screen
+          name="Notifications"
+          component={
+            NotificationScreen
           }
         />
 
@@ -217,10 +394,10 @@ const SchoolAdminNavigator =
             SchoolAdminSubjectsScreen
           }
         />
-
       </Stack.Navigator>
     );
   };
 
 
-export default SchoolAdminNavigator;
+export default
+  SchoolAdminNavigator;

@@ -1590,6 +1590,7 @@ import {
 } from "utils/studentHelpers";
 import { useAppSelector } from "@/store/hook";
 import { StudentStackParamList } from "types/navigation.types";
+import NotificationBell from "@/screens/common/notifications/NotificationBell";
 
 /* =====================================================
    NAVIGATION TYPE
@@ -2235,6 +2236,20 @@ const StudentDashboardScreen = () => {
                 Ready for another
                 productive day?
               </Text>
+
+              <View className="flex-row items-center justify-between">
+  <View>
+    <Text className="text-sm text-[#667085]">
+      Welcome back
+    </Text>
+
+    <Text className="text-xl font-extrabold text-[#15213B]">
+      {studentName}
+    </Text>
+  </View>
+
+  <NotificationBell />
+</View>
 
             </View>
 
